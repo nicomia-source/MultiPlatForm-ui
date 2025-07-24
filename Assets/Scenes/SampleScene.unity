@@ -277,6 +277,7 @@ GameObject:
   - component: {fileID: 208095591}
   - component: {fileID: 208095590}
   - component: {fileID: 208095592}
+  - component: {fileID: 208095593}
   m_Layer: 5
   m_Name: console
   m_TagString: Untagged
@@ -386,6 +387,107 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &208095593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208095588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 965d1567c2cd8674eba1d03692ca5841, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enablePositionOverride: 1
+  enableSizeOverride: 1
+  enableAnchorsOverride: 1
+  enablePivotOverride: 0
+  enableRotationOverride: 0
+  enableScaleOverride: 1
+  platformData:
+  - platform: 0
+    settings:
+      overrideAnchoredPosition: 1
+      anchoredPosition: {x: -180, y: -310}
+      overrideSizeDelta: 1
+      sizeDelta: {x: 160, y: 30}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 0
+      rotation: {x: 0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  - platform: 1
+    settings:
+      overrideAnchoredPosition: 0
+      anchoredPosition: {x: 0, y: 0}
+      overrideSizeDelta: 0
+      sizeDelta: {x: 0, y: 0}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 0
+      rotation: {x: 0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  - platform: 2
+    settings:
+      overrideAnchoredPosition: 0
+      anchoredPosition: {x: 0, y: 0}
+      overrideSizeDelta: 0
+      sizeDelta: {x: 0, y: 0}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 0
+      rotation: {x: 0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  - platform: 3
+    settings:
+      overrideAnchoredPosition: 0
+      anchoredPosition: {x: 0, y: 0}
+      overrideSizeDelta: 0
+      sizeDelta: {x: 0, y: 0}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 0
+      rotation: {x: 0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  useBinaryStorage: 0
+  binaryContainer:
+    binaryData: 
+    dataVersion: 1
+  defaultSettings:
+    overrideAnchoredPosition: 0
+    anchoredPosition: {x: 0, y: 0}
+    overrideSizeDelta: 0
+    sizeDelta: {x: 0, y: 0}
+    overrideAnchors: 0
+    anchorMin: {x: 0, y: 0}
+    anchorMax: {x: 1, y: 1}
+    overridePivot: 0
+    pivot: {x: 0.5, y: 0.5}
+    overrideRotation: 0
+    rotation: {x: 0, y: 0, z: 0}
+    overrideScale: 0
+    scale: {x: 1, y: 1, z: 1}
+  applyOnStart: 1
+  applyOnPlatformChange: 1
+  enableAutoRecord: 1
+  autoRecordDelay: 0.5
 --- !u!1 &246127808
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,6 +1723,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882007826}
   m_CullTransparentMesh: 1
+--- !u!1 &933246918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 933246920}
+  - component: {fileID: 933246919}
+  m_Layer: 0
+  m_Name: PlatformManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &933246919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933246918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c39841807dcf44ea1604bc8b3ae9c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &933246920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933246918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &970481242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1805,16 +1951,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27112ce39964094e9292fbaa6e74d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pcOnlyButtons:
-  - {fileID: 1552906914}
-  consoleButtons:
-  - {fileID: 208095592}
-  mobileButtons:
-  - {fileID: 1263598886}
   platformInfoText: {fileID: 1751410861}
-  pcOnlyObjects: []
-  consoleOnlyObjects: []
-  mobileOnlyObjects: []
 --- !u!4 &1139535174
 Transform:
   m_ObjectHideFlags: 0
@@ -2165,6 +2302,7 @@ GameObject:
   - component: {fileID: 1552906912}
   - component: {fileID: 1552906914}
   - component: {fileID: 1552906915}
+  - component: {fileID: 1552906916}
   m_Layer: 5
   m_Name: keybord
   m_TagString: Untagged
@@ -2189,7 +2327,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -182, y: -310}
+  m_AnchoredPosition: {x: -654, y: -999}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1552906912
@@ -2286,30 +2424,114 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 965d1567c2cd8674eba1d03692ca5841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pcSettings:
-    anchoredPosition: {x: 100, y: 100}
-    sizeDelta: {x: 100, y: 100}
-    anchorMin: {x: 0, y: 0}
-    anchorMax: {x: 0, y: 0}
-    pivot: {x: 0, y: 0}
-  ps5Settings:
+  enablePositionOverride: 1
+  enableSizeOverride: 1
+  enableAnchorsOverride: 1
+  enablePivotOverride: 0
+  enableRotationOverride: 1
+  enableScaleOverride: 0
+  platformData:
+  - platform: 0
+    settings:
+      overrideAnchoredPosition: 1
+      anchoredPosition: {x: -2078, y: -478}
+      overrideSizeDelta: 1
+      sizeDelta: {x: 160, y: 30}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 1
+      rotation: {x: -0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  - platform: 1
+    settings:
+      overrideAnchoredPosition: 1
+      anchoredPosition: {x: -1696, y: -329}
+      overrideSizeDelta: 1
+      sizeDelta: {x: 260, y: 30}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 1
+      rotation: {x: -0, y: 180, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  - platform: 2
+    settings:
+      overrideAnchoredPosition: 1
+      anchoredPosition: {x: -1696, y: -329}
+      overrideSizeDelta: 1
+      sizeDelta: {x: 360, y: 30}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 0
+      rotation: {x: 0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  - platform: 3
+    settings:
+      overrideAnchoredPosition: 1
+      anchoredPosition: {x: -1696, y: -329}
+      overrideSizeDelta: 1
+      sizeDelta: {x: 460, y: 30}
+      overrideAnchors: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 1, y: 1}
+      overridePivot: 0
+      pivot: {x: 0.5, y: 0.5}
+      overrideRotation: 0
+      rotation: {x: 0, y: 0, z: 0}
+      overrideScale: 0
+      scale: {x: 1, y: 1, z: 1}
+  useBinaryStorage: 1
+  binaryContainer:
+    binaryData: 010000000400000000130040a0c40000b4c3000020430000f04100000000000000000000803f0000803f0000003f0000003f0000008000000000000000000000803f0000803f0000803f011300e0d9c400801bc4000020430000f04100000000000000000000803f0000803f0000003f0000003f0000008000000000000000000000803f0000803f0000803f02130000d6c4008081c3000020430000f04100000000000000000000803f0000803f0000003f0000003f0000008000000000000000000000803f0000803f0000803f0313008023c400c079c4000020430000f04100000000000000000000803f0000803f0000003f0000003f0000008000000000000000000000803f0000803f0000803f
+    dataVersion: 1
+  defaultSettings:
+    overrideAnchoredPosition: 0
     anchoredPosition: {x: 0, y: 0}
+    overrideSizeDelta: 0
     sizeDelta: {x: 0, y: 0}
+    overrideAnchors: 0
     anchorMin: {x: 0, y: 0}
-    anchorMax: {x: 0, y: 0}
-    pivot: {x: 0, y: 0}
-  androidSettings:
-    anchoredPosition: {x: 0, y: 0}
-    sizeDelta: {x: 0, y: 0}
-    anchorMin: {x: 0, y: 0}
-    anchorMax: {x: 0, y: 0}
-    pivot: {x: 0, y: 0}
-  iosSettings:
-    anchoredPosition: {x: 0, y: 0}
-    sizeDelta: {x: 0, y: 0}
-    anchorMin: {x: 0, y: 0}
-    anchorMax: {x: 0, y: 0}
-    pivot: {x: 0, y: 0}
+    anchorMax: {x: 1, y: 1}
+    overridePivot: 0
+    pivot: {x: 0.5, y: 0.5}
+    overrideRotation: 0
+    rotation: {x: 0, y: 0, z: 0}
+    overrideScale: 0
+    scale: {x: 1, y: 1, z: 1}
+  applyOnStart: 1
+  applyOnPlatformChange: 1
+  enableAutoRecord: 1
+  autoRecordDelay: 0.5
+--- !u!114 &1552906916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552906910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 402cc8238b0204841833f55da18a649c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testTarget: {fileID: 0}
+  testDataCount: 100
+  runPerformanceTest: 0
+  lastTestResult: 
+  compressionRatio: 0
+  traditionalSize: 0
+  binarySize: 0
 --- !u!1 &1554959969
 GameObject:
   m_ObjectHideFlags: 0
@@ -2742,3 +2964,4 @@ SceneRoots:
   - {fileID: 795652300}
   - {fileID: 1139535174}
   - {fileID: 993498653}
+  - {fileID: 933246920}

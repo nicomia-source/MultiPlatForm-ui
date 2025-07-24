@@ -31,10 +31,9 @@
 - 显示当前选择的平台
 
 ### 6. PlatformSpecificBehavior 类
-- 高级观察者实现
-- 根据平台切换UI元素和游戏对象的显示/隐藏
-- 支持平台特定的按钮组和游戏对象数组
-- 提供详细的平台信息显示
+- 平台信息显示观察者
+- 提供详细的平台信息显示功能
+- 不再强制隐藏UI组件（UI适配由MultiPlatformRectData系统处理）
 
 ### 7. PlatformPerformanceSettings 类
 - 性能优化观察者
@@ -55,8 +54,9 @@
 2. 在Inspector中将Dropdown组件拖拽到platformDropdown字段
 3. 如果要显示当前平台，将PlatformDisplay脚本添加到另一个GameObject上
 4. 将Text组件拖拽到PlatformDisplay的displayText字段
-5. 可选：添加PlatformSpecificBehavior脚本来控制平台特定的UI和对象
+5. 可选：添加PlatformSpecificBehavior脚本来显示平台信息
 6. 可选：添加PlatformPerformanceSettings脚本来自动优化性能设置
+7. 可选：为UI元素添加MultiPlatformRectData组件来实现跨平台UI适配
 
 ### 3. 运行测试
 - 运行场景
@@ -110,12 +110,9 @@ public class MyPlatformObserver : MonoBehaviour, IPlatformObserver
 
 ### PlatformSpecificBehavior 使用方法
 1. 将脚本添加到GameObject上
-2. 在Inspector中设置以下数组：
-   - PC Only Buttons：仅在PC平台显示的按钮
-   - Console Buttons：仅在主机平台显示的按钮
-   - Mobile Buttons：仅在移动平台显示的按钮
-   - Platform Info Text：显示平台详细信息的Text组件
-   - 对应的游戏对象数组
+2. 在Inspector中设置Platform Info Text字段：
+   - Platform Info Text：显示平台详细信息的TextMeshProUGUI组件
+3. 脚本会自动在平台切换时更新显示的平台信息
 
 ### PlatformPerformanceSettings 使用方法
 1. 将脚本添加到GameObject上
@@ -127,5 +124,6 @@ public class MyPlatformObserver : MonoBehaviour, IPlatformObserver
 1. 确保在OnDestroy中移除观察者，避免内存泄漏
 2. PlatformManager使用单例模式，会在场景切换时保持存在
 3. 观察者注册应该在Start()中进行，确保PlatformManager已经初始化
-4. PlatformSpecificBehavior和PlatformPerformanceSettings位于PlatformSpecificBehavior.cs文件中
-5. 所有观察者类都会在平台切换时自动收到通知并执行相应逻辑
+4. PlatformSpecificBehavior现在只负责显示平台信息，不再强制隐藏UI组件
+5. UI适配功能由MultiPlatformRectData系统处理，提供更精细的跨平台UI控制
+6. 所有观察者类都会在平台切换时自动收到通知并执行相应逻辑

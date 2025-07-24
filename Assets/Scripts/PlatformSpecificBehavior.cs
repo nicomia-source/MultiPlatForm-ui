@@ -1,20 +1,11 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
-// Platform-specific behavior observer example
+// Platform information display observer
 public class PlatformSpecificBehavior : MonoBehaviour, IPlatformObserver
 {
-    [Header("UI Elements")]
-    [SerializeField] private Button[] pcOnlyButtons;
-    [SerializeField] private Button[] consoleButtons;
-    [SerializeField] private Button[] mobileButtons;
+    [Header("Platform Info Display")]
     [SerializeField] private TextMeshProUGUI platformInfoText;
-    
-    [Header("Game Objects")]
-    [SerializeField] private GameObject[] pcOnlyObjects;
-    [SerializeField] private GameObject[] consoleOnlyObjects;
-    [SerializeField] private GameObject[] mobileOnlyObjects;
     
     private void Start()
     {
@@ -36,97 +27,9 @@ public class PlatformSpecificBehavior : MonoBehaviour, IPlatformObserver
     
     public void OnPlatformChanged(Platform newPlatform)
     {
-        // Adjust UI and game objects based on platform
-        switch (newPlatform)
-        {
-            case Platform.PC:
-                SetupPCPlatform();
-                break;
-            case Platform.PS5:
-                SetupConsolePlatform("PS5");
-                break;
-            case Platform.Android:
-                SetupMobilePlatform("Android");
-                break;
-            case Platform.iOS:
-                SetupMobilePlatform("iOS");
-                break;
-        }
-        
+        // 只更新平台信息显示，不再强制隐藏UI组件
         UpdatePlatformInfo(newPlatform);
-    }
-    
-    private void SetupPCPlatform()
-    {
-        // Enable PC-specific UI
-        SetButtonsActive(pcOnlyButtons, true);
-        SetButtonsActive(consoleButtons, false);
-        SetButtonsActive(mobileButtons, false);
-        
-        // Enable PC-specific game objects
-        SetGameObjectsActive(pcOnlyObjects, true);
-        SetGameObjectsActive(consoleOnlyObjects, false);
-        SetGameObjectsActive(mobileOnlyObjects, false);
-        
-        Debug.Log("Switched to PC platform configuration: Enabled keyboard/mouse control, high quality settings");
-    }
-    
-    private void SetupConsolePlatform(string consoleName)
-    {
-        // Enable console-specific UI
-        SetButtonsActive(pcOnlyButtons, false);
-        SetButtonsActive(consoleButtons, true);
-        SetButtonsActive(mobileButtons, false);
-        
-        // Enable console-specific game objects
-        SetGameObjectsActive(pcOnlyObjects, false);
-        SetGameObjectsActive(consoleOnlyObjects, true);
-        SetGameObjectsActive(mobileOnlyObjects, false);
-        
-        Debug.Log($"Switched to {consoleName} platform configuration: Enabled controller support, optimized quality settings");
-    }
-    
-    private void SetupMobilePlatform(string mobilePlatform)
-    {
-        // Enable mobile-specific UI
-        SetButtonsActive(pcOnlyButtons, false);
-        SetButtonsActive(consoleButtons, false);
-        SetButtonsActive(mobileButtons, true);
-        
-        // Enable mobile-specific game objects
-        SetGameObjectsActive(pcOnlyObjects, false);
-        SetGameObjectsActive(consoleOnlyObjects, false);
-        SetGameObjectsActive(mobileOnlyObjects, true);
-        
-        Debug.Log($"Switched to {mobilePlatform} platform configuration: Enabled touch control, power saving mode");
-    }
-    
-    private void SetButtonsActive(Button[] buttons, bool active)
-    {
-        if (buttons != null)
-        {
-            foreach (var button in buttons)
-            {
-                if (button != null)
-                {
-                    button.gameObject.SetActive(active);
-                }
-            }
-        }
-    }
-    
-    private void SetGameObjectsActive(GameObject[] objects, bool active)
-    {
-        if (objects != null)
-        {
-            foreach (var obj in objects)
-            {
-                if (obj != null)
-                {
-                    obj.SetActive(active);
-                }
-            }
-        }
+        Debug.Log($"Platform changed to: {newPlatform}. UI components will be handled by MultiPlatformRectData system.");
     }
     
     private void UpdatePlatformInfo(Platform platform)
