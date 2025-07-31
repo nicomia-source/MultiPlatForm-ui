@@ -37,6 +37,37 @@ public class RectTransformEditor : Editor
     {
         var platformManagerInstance = GetPlatformManagerInstance();
         platformManagerInstance?.SetPlatform(platform);
+        
+        // 立即更新所有Scene中的MultiPlatformRectData组件
+        RefreshAllMultiPlatformComponents();
+    }
+    
+    // 刷新所有MultiPlatformRectData组件以应用新平台设置
+    private static void RefreshAllMultiPlatformComponents()
+    {
+        // 查找所有MultiPlatformRectData组件
+        MultiPlatformRectData[] allComponents = UnityEngine.Object.FindObjectsOfType<MultiPlatformRectData>();
+        
+        foreach (var component in allComponents)
+        {
+            if (component != null)
+            {
+                // 应用当前平台设置
+                component.ApplyCurrentPlatformSettings();
+                
+                // 标记为已修改，确保Scene视图更新
+                UnityEditor.EditorUtility.SetDirty(component);
+                UnityEditor.EditorUtility.SetDirty(component.gameObject);
+            }
+        }
+        
+        // 强制刷新Scene视图
+        UnityEditor.SceneView.RepaintAll();
+        
+        // 刷新Inspector
+        UnityEditor.EditorUtility.SetDirty(UnityEditor.Selection.activeGameObject);
+        
+        Debug.Log($"Platform switched and applied to {allComponents.Length} UI components");
     }
     
     // 静态方法：获取当前平台名称
@@ -113,10 +144,6 @@ public class RectTransformEditor : Editor
                 if (targetPlatform.HasValue)
                 {
                     SetPlatform(targetPlatform.Value);
-                    if (multiPlatformData != null)
-                    {
-                        multiPlatformData.ApplyCurrentPlatformSettings();
-                    }
                     e.Use();
                     Repaint();
                 }
@@ -128,11 +155,6 @@ public class RectTransformEditor : Editor
             if (GUILayout.Button("PC (1)", EditorStyles.miniButtonLeft, GUILayout.Height(20)))
             {
                 SetPlatform(Platform.PC);
-                // 如果有MultiPlatformRectData组件，自动应用设置
-                if (multiPlatformData != null)
-                {
-                    multiPlatformData.ApplyCurrentPlatformSettings();
-                }
                 Repaint();
             }
             
@@ -141,11 +163,6 @@ public class RectTransformEditor : Editor
             if (GUILayout.Button("PS5 (2)", EditorStyles.miniButtonMid, GUILayout.Height(20)))
             {
                 SetPlatform(Platform.PS5);
-                // 如果有MultiPlatformRectData组件，自动应用设置
-                if (multiPlatformData != null)
-                {
-                    multiPlatformData.ApplyCurrentPlatformSettings();
-                }
                 Repaint();
             }
             
@@ -154,11 +171,6 @@ public class RectTransformEditor : Editor
             if (GUILayout.Button("Android (3)", EditorStyles.miniButtonMid, GUILayout.Height(20)))
             {
                 SetPlatform(Platform.Android);
-                // 如果有MultiPlatformRectData组件，自动应用设置
-                if (multiPlatformData != null)
-                {
-                    multiPlatformData.ApplyCurrentPlatformSettings();
-                }
                 Repaint();
             }
             
@@ -167,11 +179,6 @@ public class RectTransformEditor : Editor
             if (GUILayout.Button("iOS (4)", EditorStyles.miniButtonRight, GUILayout.Height(20)))
             {
                 SetPlatform(Platform.iOS);
-                // 如果有MultiPlatformRectData组件，自动应用设置
-                if (multiPlatformData != null)
-                {
-                    multiPlatformData.ApplyCurrentPlatformSettings();
-                }
                 Repaint();
             }
             
@@ -203,12 +210,23 @@ public class RectTransformEditor : Editor
             if (multiPlatformData != null)
             {
                 EditorGUILayout.Space(2);
-                EditorGUILayout.HelpBox("点击平台按钮会自动切换平台并应用对应的UI设置\n使用快捷键 Ctrl+1/2/3/4 快速切换平台", MessageType.Info);
+                EditorGUILayout.HelpBox("✨ 平台切换功能已启用！\n" +
+                    "• 点击平台按钮会自动切换平台并应用对应的UI设置\n" +
+                    "• 使用快捷键 Ctrl+1/2/3/4 快速切换平台\n" +
+                    "• 打开 Window > Platform Preview 获得更强大的预览工具", MessageType.Info);
+                
+                // 添加打开平台预览窗口的按钮
+                if (GUILayout.Button("🎮 打开平台预览窗口", GUILayout.Height(25)))
+                {
+                    EditorWindow.GetWindow<PlatformPreviewWindow>("Platform Preview");
+                }
             }
             else
             {
                 EditorGUILayout.Space(2);
-                EditorGUILayout.HelpBox("添加MultiPlatformRectData组件后，切换平台时会自动应用UI设置\n使用快捷键 Ctrl+1/2/3/4 快速切换平台", MessageType.Info);
+                EditorGUILayout.HelpBox("添加MultiPlatformRectData组件后，切换平台时会自动应用UI设置\n" +
+                    "使用快捷键 Ctrl+1/2/3/4 快速切换平台\n" +
+                    "打开 Window > Platform Preview 获得更强大的预览工具", MessageType.Info);
             }
             
             EditorGUILayout.EndVertical();
@@ -410,9 +428,23 @@ public class RectTransformEditor : Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("压缩比:", GUILayout.Width(70));
             float compressionRatio = multiPlatformData.GetCompressionRatio();
-            string compressionText = compressionRatio > 0 ? $"{compressionRatio:F1}x" : "N/A";
+            string compressionText = compressionRatio > 0 ? $"{compressionRatio:F2}x" : "N/A";
             EditorGUILayout.LabelField(compressionText, EditorStyles.miniLabel);
             EditorGUILayout.EndHorizontal();
+            
+            // 显示详细存储信息
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("详细存储信息:", EditorStyles.miniLabel);
+            string detailedInfo = multiPlatformData.GetDetailedStorageInfo();
+            string[] infoLines = detailedInfo.Split('\n');
+            foreach (string line in infoLines)
+            {
+                if (!string.IsNullOrEmpty(line.Trim()))
+                {
+                    EditorGUILayout.LabelField(line, EditorStyles.miniLabel);
+                }
+            }
+            EditorGUILayout.EndVertical();
         }
         else
         {

@@ -123,12 +123,24 @@ public class BinaryStorageTest : MonoBehaviour
             int.TryParse(sizeStr, out binarySize);
         }
 
-        traditionalSize = System.Enum.GetValues(typeof(Platform)).Length * 200; // 估算
+        // 使用精确计算的传统存储大小
+        string detailedInfo = testTarget.GetDetailedStorageInfo();
+        string[] lines = detailedInfo.Split('\n');
+        foreach (string line in lines)
+        {
+            if (line.StartsWith("Traditional Storage:"))
+            {
+                string sizeStr = line.Split(':')[1].Trim().Split(' ')[0];
+                int.TryParse(sizeStr, out traditionalSize);
+                break;
+            }
+        }
 
         lastTestResult = $"Traditional: {traditionalTime}ms, Binary: {binaryTime}ms\n" +
-                        $"Size - Traditional: ~{traditionalSize}B, Binary: {binarySize}B\n" +
+                        $"Size - Traditional: {traditionalSize}B, Binary: {binarySize}B\n" +
                         $"Compression: {compressionRatio:F2}x\n" +
-                        $"Performance: {(binaryTime < traditionalTime ? "Binary faster" : "Traditional faster")}";
+                        $"Performance: {(binaryTime < traditionalTime ? "Binary faster" : "Traditional faster")}\n" +
+                        $"Detailed Info:\n{detailedInfo}";
 
         UnityEngine.Debug.Log($"Performance Comparison:\n{lastTestResult}");
     }

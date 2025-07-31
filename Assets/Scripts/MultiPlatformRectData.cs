@@ -56,6 +56,7 @@ public class PlatformDataEntry
     }
 }
 
+[RequireComponent(typeof(RectTransform))]
 public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
 {
     [Header("Enabled Properties")]
@@ -99,6 +100,19 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
     // Public properties for auto-record settings
     public bool EnableAutoRecord => enableAutoRecord;
     public float AutoRecordDelay => autoRecordDelay;
+    
+    // Public methods for setting enabled configurations
+    public void SetPositionOverride(bool enabled) => enablePositionOverride = enabled;
+    public void SetSizeOverride(bool enabled) => enableSizeOverride = enabled;
+    public void SetAnchorsOverride(bool enabled) => enableAnchorsOverride = enabled;
+    public void SetPivotOverride(bool enabled) => enablePivotOverride = enabled;
+    public void SetRotationOverride(bool enabled) => enableRotationOverride = enabled;
+    public void SetScaleOverride(bool enabled) => enableScaleOverride = enabled;
+    public void SetAutoRecord(bool enabled) => enableAutoRecord = enabled;
+    
+    // Public methods for setting runtime options
+    public void SetApplyOnStart(bool enabled) => applyOnStart = enabled;
+    public void SetApplyOnPlatformChange(bool enabled) => applyOnPlatformChange = enabled;
 
     void Awake()
     {
@@ -118,9 +132,21 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
 
     void OnEnable()
     {
-        if (applyOnPlatformChange && PlatformManager.Instance != null)
+        // 在编辑器模式下总是注册为观察者，以便响应平台切换
+        // 在运行时模式下只有当applyOnPlatformChange为true时才注册
+        if (PlatformManager.Instance != null)
         {
-            PlatformManager.Instance.AddObserver(this);
+#if UNITY_EDITOR
+            if (!Application.isPlaying || applyOnPlatformChange)
+            {
+                PlatformManager.Instance.AddObserver(this);
+            }
+#else
+            if (applyOnPlatformChange)
+            {
+                PlatformManager.Instance.AddObserver(this);
+            }
+#endif
         }
     }
 
@@ -147,6 +173,12 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
 
     private void SaveOriginalSettings()
     {
+        // 确保RectTransform已初始化
+        if (rectTransform == null)
+        {
+            rectTransform = GetComponent<RectTransform>();
+        }
+        
         if (rectTransform != null)
         {
             originalSettings = new PlatformRectSettings
@@ -207,10 +239,26 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
 
     public void ApplySettings(PlatformRectSettings settings)
     {
-        if (rectTransform == null) return;
+        // 确保RectTransform已初始化
+        if (rectTransform == null)
+        {
+            rectTransform = GetComponent<RectTransform>();
+        }
+        
+        if (rectTransform == null) 
+        {
+            Debug.LogWarning($"[{gameObject.name}] RectTransform component not found, cannot apply settings. Make sure this component is attached to a UI object.");
+            return;
+        }
+
+        Debug.Log($"[{gameObject.name}] Applying settings - Position Override: {enablePositionOverride && settings.overrideAnchoredPosition}");
 
         if (enablePositionOverride && settings.overrideAnchoredPosition)
+        {
+            var oldPosition = rectTransform.anchoredPosition;
             rectTransform.anchoredPosition = settings.anchoredPosition;
+            Debug.Log($"[{gameObject.name}] Position changed from {oldPosition} to {settings.anchoredPosition}");
+        }
         
         if (enableSizeOverride && settings.overrideSizeDelta)
             rectTransform.sizeDelta = settings.sizeDelta;
@@ -230,7 +278,28 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
         if (enableScaleOverride && settings.overrideScale)
             rectTransform.localScale = settings.scale;
 
-        Debug.Log($"Applied {settings.GetType().Name} settings for platform");
+#if UNITY_EDITOR
+        // 在Editor模式下，确保Scene视图立即更新
+        if (!Application.isPlaying)
+        {
+            UnityEditor.EditorUtility.SetDirty(rectTransform);
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.EditorUtility.SetDirty(gameObject);
+            
+            // 强制刷新Scene视图
+            UnityEditor.SceneView.RepaintAll();
+            
+            // 如果当前选中的是这个对象，强制刷新Inspector
+            if (UnityEditor.Selection.activeGameObject == gameObject)
+            {
+                UnityEditor.EditorUtility.SetDirty(UnityEditor.Selection.activeGameObject);
+                // 强制刷新Inspector显示
+                UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+            }
+        }
+#endif
+
+        Debug.Log($"[{gameObject.name}] Applied platform settings: Position={enablePositionOverride}, Size={enableSizeOverride}");
     }
 
     public void ApplyCurrentPlatformSettings()
@@ -253,15 +322,37 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
     // Platform observer interface implementation
     public void OnPlatformChanged(Platform newPlatform)
     {
+        Debug.Log($"[{gameObject.name}] Platform changed to: {newPlatform}");
+        
+        // 在编辑器模式下总是应用设置，在运行时模式下只有当applyOnPlatformChange为true时才应用
+#if UNITY_EDITOR
+        if (!Application.isPlaying || applyOnPlatformChange)
+        {
+            var settings = GetSettingsForPlatform(newPlatform);
+            Debug.Log($"[{gameObject.name}] Applying settings for {newPlatform}: Position={settings.anchoredPosition}, Override={settings.overrideAnchoredPosition}");
+            ApplySettings(settings);
+            
+            // 强制刷新Scene视图
+            UnityEditor.SceneView.RepaintAll();
+            UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+        }
+#else
         if (applyOnPlatformChange)
         {
             ApplySettings(GetSettingsForPlatform(newPlatform));
         }
+#endif
     }
 
     // Editor utility methods
     public void CaptureCurrentSettings()
     {
+        // 确保RectTransform已初始化
+        if (rectTransform == null)
+        {
+            rectTransform = GetComponent<RectTransform>();
+        }
+        
         if (PlatformManager.Instance != null && rectTransform != null)
         {
             Platform current = PlatformManager.Instance.CurrentPlatform;
@@ -290,6 +381,12 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
     // 保存当前设置到当前平台 - Editor专用方法
     public void SaveCurrentSettings()
     {
+        // 确保RectTransform已初始化
+        if (rectTransform == null)
+        {
+            rectTransform = GetComponent<RectTransform>();
+        }
+        
         if (PlatformManager.Instance != null && rectTransform != null)
         {
             Platform current = PlatformManager.Instance.CurrentPlatform;
@@ -458,15 +555,62 @@ public class MultiPlatformRectData : MonoBehaviour, IPlatformObserver
         }
     }
 
-    // 存储压缩比较
+    // 精确计算传统存储大小
+    private int CalculateActualTraditionalSize()
+    {
+        if (platformData == null || platformData.Count == 0)
+            return 0;
+
+        // 精确计算PlatformRectSettings的大小
+        int singleSettingsSize = 
+            6 * sizeof(bool) +           // 6个布尔值: 6字节
+            5 * (2 * sizeof(float)) +    // 5个Vector2: 40字节
+            2 * (3 * sizeof(float));     // 2个Vector3: 24字节
+        
+        // 考虑C#对象开销和内存对齐
+        int objectOverhead = 24;  // 对象头、方法表指针等
+        int memoryAlignment = 8;  // 内存对齐填充
+        
+        int actualSingleSize = singleSettingsSize + objectOverhead;
+        // 向上对齐到8字节边界
+        actualSingleSize = ((actualSingleSize + memoryAlignment - 1) / memoryAlignment) * memoryAlignment;
+        
+        // PlatformDataEntry还包含Platform枚举(4字节)和对象开销
+        int entryOverhead = sizeof(int) + objectOverhead; // Platform枚举 + 对象开销
+        int totalEntrySize = actualSingleSize + entryOverhead;
+        
+        // List<T>的开销
+        int listOverhead = 32; // List对象本身的开销
+        
+        return (platformData.Count * totalEntrySize) + listOverhead;
+    }
+
+    // 存储压缩比较 - 使用精确计算
     public float GetCompressionRatio()
     {
         if (!useBinaryStorage || platformData == null || platformData.Count == 0)
             return 1.0f;
 
-        int traditionalSize = platformData.Count * 200; // 估算
+        int traditionalSize = CalculateActualTraditionalSize();
         int binarySize = binaryContainer.GetStorageSize();
         
         return binarySize > 0 ? (float)traditionalSize / binarySize : 1.0f;
+    }
+
+    // 获取详细的存储信息对比
+    public string GetDetailedStorageInfo()
+    {
+        if (platformData == null || platformData.Count == 0)
+            return "No data available";
+
+        int traditionalSize = CalculateActualTraditionalSize();
+        int binarySize = useBinaryStorage ? binaryContainer.GetStorageSize() : 0;
+        float compressionRatio = GetCompressionRatio();
+
+        return $"Platform Count: {platformData.Count}\n" +
+               $"Traditional Storage: {traditionalSize} bytes\n" +
+               $"Binary Storage: {binarySize} bytes\n" +
+               $"Compression Ratio: {compressionRatio:F2}x\n" +
+               $"Space Saved: {traditionalSize - binarySize} bytes ({((float)(traditionalSize - binarySize) / traditionalSize * 100):F1}%)";
     }
 }
